@@ -2,6 +2,7 @@ package local.hackathon.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -19,6 +20,7 @@ import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
 import local.hackathon.entities.LaserProjectile;
+import local.hackathon.util.TiledObjects;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -54,8 +56,14 @@ public class GameScreen implements Screen {
         this.parent = parent;
     }
 
+    public Music gameSong;
+
     @Override
     public void show() {
+
+//        gameSong = Gdx.audio.newMusic(Gdx.files.internal("Music/Game.wav"));
+//        gameSong.setLooping(true);
+//        gameSong.play();
         // Screen size
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();

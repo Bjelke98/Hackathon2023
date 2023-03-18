@@ -16,7 +16,7 @@ import static local.hackathon.util.Settings.PPM;
 public class Player extends Character {
 
     public static final int START_HP = 50_000;
-    private int hp = START_HP;
+    public int hp = START_HP;
 
     boolean spriteIsFlipped = false;
 
@@ -40,6 +40,8 @@ public class Player extends Character {
 
     private boolean vibrating = false;
 
+    int orangeCount = 0;
+    int bananaCount = 0;
     public Player(World world, SpriteBatch batch, GameScreen parent, Controller controller) {
         super(world);
         this.batch = batch;

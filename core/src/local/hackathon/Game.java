@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerAdapter;
 import com.badlogic.gdx.controllers.ControllerListener;
@@ -27,13 +28,16 @@ public class Game extends com.badlogic.gdx.Game {
 	MenuScreen menuScreen;
 	GameOverScreen gameOverScreen;
 	ScoreboardScreen scoreboardScreen;
-
+	public Music menuSong;
 	public static ControllerController controllerController;
-
 	@Override
 	public void create () {
+//		Gdx.app.log("---", Gdx.files.internal("Music/Menu.wav").exists() ? "True": "False");
+//		menuSong = Gdx.audio.newMusic(Gdx.files.internal("Music/Menu.wav"));
+//		menuSong.setLooping(true);
+//		menuSong.play();
 		controllerController = new ControllerController();
-		changeScreen(3, 10_000, 0, 9999);
+		changeScreen(1, 10_000, 0, 9999);
 	}
 
 	public void changeScreen(int screen, int playerHP, int bossHP, float timeSpent){

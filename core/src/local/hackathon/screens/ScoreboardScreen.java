@@ -49,7 +49,6 @@ public class ScoreboardScreen implements Screen {
 
         Table table = new Table();
         table.setFillParent(true);
-        table.setDebug(true);
         stage.addActor(table);
 
         table.add(header).fillX().uniformX();
