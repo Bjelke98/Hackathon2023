@@ -34,6 +34,7 @@ import local.hackathon.powerups.FireablePowerUp;
 import local.hackathon.powerups.NukeUp;
 import local.hackathon.powerups.OrangeUp;
 import local.hackathon.powerups.PowerUp;
+import local.hackathon.util.GameOverContainer;
 import local.hackathon.util.TiledObjects;
 
 import java.awt.*;
@@ -88,6 +89,9 @@ public class GameScreen implements Screen {
     Label bossHp;
 
     BitmapFont font;
+
+    boolean swapAtEnd = false;
+    GameOverContainer gameOverContainer;
 
     @Override
     public void show() {
@@ -173,16 +177,17 @@ public class GameScreen implements Screen {
             Object aData = a.getUserData();
             Object bData = b.getUserData();
 
+            Object bBData = b.getBody().getUserData();
+            Object aBData = a.getBody().getUserData();
+
 
             if(aData instanceof OrangeUp || aData instanceof NukeUp){
-                Object bBData = b.getBody().getUserData();
                 if(bBData instanceof Player){
                     ((Player)bBData).givePowerUp((PowerUp) aData);
                     removePowerUp((PowerUp) aData);
                 }
             }
             if(bData instanceof OrangeUp || bData instanceof NukeUp){
-                Object aBData = a.getBody().getUserData();
                 if(aBData instanceof Player){
                     ((Player)aBData).givePowerUp((PowerUp) bData);
                     removePowerUp((PowerUp) bData);
@@ -221,17 +226,17 @@ public class GameScreen implements Screen {
                         removeFireBall((FireablePowerUp) aData);
                     }
                 }
-            } else if(aData instanceof Player){
+            } else if(aBData instanceof Player){
                 if(bData instanceof LaserProjectile){
                     if(((LaserProjectile) bData).getSender() instanceof BossDeath){
-                        ((Player) aData).impact(LASER_DAMAGE);
-                        removeLaser((LaserProjectile) bData);
+                        ((Player) aBData).impact(LASER_DAMAGE);
+                        removeLaser((LaserProjectile) bBData);
                     }
                 }
-            } else if(bData instanceof Player){
+            } else if(bBData instanceof Player){
                 if(aData instanceof LaserProjectile){
                     if(((LaserProjectile) aData).getSender() instanceof BossDeath){
-                        ((Player) bData).impact(LASER_DAMAGE);
+                        ((Player) bBData).impact(LASER_DAMAGE);
                         removeLaser((LaserProjectile) aData);
                     }
                 }
@@ -297,6 +302,11 @@ public class GameScreen implements Screen {
         batch.end();
 
         //b2dr.render(world, camera.combined.scl(PPM));
+
+        if(swapAtEnd){
+            parent.changeScreen(gameOverContainer.i, gameOverContainer.i1, gameOverContainer.i2, gameOverContainer.timeSpent);
+        }
+
     }
     private float powerupInterval = 0;
     public void spawnPowerups(float delta){
@@ -452,8 +462,10 @@ public class GameScreen implements Screen {
 
     public void removeLaser(LaserProjectile laser){
         lasers.remove(laser);
-        laser.dispose();
-        clense.add(laser.getBody());
+        if(laser!=null){
+            clense.add(laser.getBody());
+            laser.dispose();
+        }
     }
 
     public void addFireBall(Character sender, float radians, int type){
@@ -489,5 +501,10 @@ public class GameScreen implements Screen {
         }
 
         bossDeath.dispose();
+    }
+
+    public void changeScreen(int i, int i1, int i2, float timeSpent) {
+        gameOverContainer = new GameOverContainer(i, i1, i2, timeSpent);
+        swapAtEnd = true;
     }
 }

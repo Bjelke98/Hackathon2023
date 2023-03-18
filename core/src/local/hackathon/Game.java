@@ -47,11 +47,12 @@ public class Game extends com.badlogic.gdx.Game {
 				this.setScreen(menuScreen);
 				break;
 			case 2:
-				if(gameScreen != null) gameScreen.hide();
+//				if(gameScreen != null) gameScreen.hide();
 				gameScreen = new GameScreen(this);
 				this.setScreen(gameScreen);
 				break;
 			case 3:
+				//gameScreen.hide();
 				gameOverScreen = new GameOverScreen(this, playerHP, bossHP, timeSpent);
 				this.setScreen(gameOverScreen);
 				break;

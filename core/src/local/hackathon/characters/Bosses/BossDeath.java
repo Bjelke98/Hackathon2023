@@ -31,7 +31,7 @@ public class BossDeath extends Enemy {
     float timeInterval = 0;
 
 
-    public int hp = START_HP;
+    public int hp = 100;
     float hpInterval = hp;
 
     Texture idle1;
@@ -186,7 +186,7 @@ public class BossDeath extends Enemy {
             for (Player p : players) {
                 avgHP+=p.hp;
             }
-            parent.parent.changeScreen(3, (int)((float)avgHP/players.size()), 0, parent.timeSpent);
+            parent.changeScreen(3, (int)((float)avgHP/players.size()), 0, parent.timeSpent);
         }
     }
 

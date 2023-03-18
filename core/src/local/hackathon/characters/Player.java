@@ -19,7 +19,7 @@ import static local.hackathon.util.Settings.PPM;
 public class Player extends Character {
 
     public static final int START_HP = 50_000;
-    public int hp = START_HP;
+    public int hp = 100;
 
     boolean spriteIsFlipped = false;
 
@@ -203,7 +203,7 @@ public class Player extends Character {
     public void impact(int damage) {
         hp-=damage;
         if(hp<=0){
-            parent.parent.changeScreen(3, 0, parent.bossDeath.hp, parent.timeSpent);
+            parent.changeScreen(3, 0, parent.bossDeath.hp, parent.timeSpent);
         }
     }
 
