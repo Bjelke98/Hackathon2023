@@ -6,32 +6,31 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import static local.hackathon.util.Settings.PPM;
 
-public class OrangeUp extends PowerUp{
+public class NukeUp extends PowerUp{
+    Texture nuke;
 
-    Texture orange;
-
-    public OrangeUp(World world, SpriteBatch batch, int x, int y) {
+    public NukeUp(World world, SpriteBatch batch, int x, int y) {
         super(world, batch, x, y);
     }
 
     @Override
     public void show() {
         super.show();
-        orange = new Texture("Other/Orange.png");
+        nuke = new Texture("Other/Nuke.png");
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        batch.draw(orange,
-            body.getPosition().x*PPM - (float)orange.getWidth()/2,
-            body.getPosition().y*PPM - (float)orange.getHeight()/2
+        batch.draw(nuke,
+                body.getPosition().x*PPM - (float)nuke.getWidth()/2,
+                body.getPosition().y*PPM - (float)nuke.getHeight()/2
         );
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        orange.dispose();
+        nuke.dispose();
     }
 }

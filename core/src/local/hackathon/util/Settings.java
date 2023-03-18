@@ -10,7 +10,7 @@ public class Settings {
 
     public static final int LASER_DAMAGE = 10;
     public static final int ORANGE_DAMAGE = 1000;
-    public static final int BANANA_DAMAGE = 5000;
+    public static final int NUKE_DAMAGE = 5000;
 
     public static final Skin SKIN = new Skin(Gdx.files.internal("Skins/tracer/skin/tracer-ui.json"));
 

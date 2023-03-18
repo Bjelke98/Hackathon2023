@@ -24,9 +24,10 @@ public class PowerUp implements Renderable {
     public void show() {
 
         BodyDef def = new BodyDef();
-        def.type = BodyDef.BodyType.StaticBody;
+        def.type = BodyDef.BodyType.DynamicBody;
         def.position.set(x/PPM, y/PPM);
         def.fixedRotation = true;
+        def.gravityScale = 0;
 
         body = world.createBody(def);
 
@@ -37,10 +38,13 @@ public class PowerUp implements Renderable {
         FixtureDef fix = new FixtureDef();
         fix.density = 0;
         fix.shape = shape;
-        fix.isSensor = true;
+//        fix.isSensor = true;
         fix.restitution = 1;
 
         body.createFixture(fix);
+        body.getFixtureList().get(0).setUserData(this);
+
+        body.setLinearVelocity(20, 20);
 
         shape.dispose();
 
@@ -59,5 +63,9 @@ public class PowerUp implements Renderable {
     @Override
     public void dispose() {
 
+    }
+
+    public Body getBody() {
+        return body;
     }
 }

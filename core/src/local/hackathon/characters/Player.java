@@ -9,6 +9,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
 import local.hackathon.animations.CharacterAnimation;
+import local.hackathon.powerups.NukeUp;
+import local.hackathon.powerups.OrangeUp;
+import local.hackathon.powerups.PowerUp;
 import local.hackathon.screens.GameScreen;
 
 import static local.hackathon.util.Settings.PPM;
@@ -41,7 +44,7 @@ public class Player extends Character {
     private boolean vibrating = false;
 
     int orangeCount = 0;
-    int bananaCount = 0;
+    int nukeCount = 0;
     public Player(World world, SpriteBatch batch, GameScreen parent, Controller controller) {
         super(world);
         this.batch = batch;
@@ -188,5 +191,15 @@ public class Player extends Character {
 
     public void impact(int damage) {
         hp-=damage;
+    }
+
+    public void givePowerUp(PowerUp powerUp) {
+        if(powerUp instanceof NukeUp){
+            nukeCount++;
+        } else if(powerUp instanceof OrangeUp){
+            orangeCount++;
+        }
+        Gdx.app.log("Oranges: ", orangeCount+"");
+        Gdx.app.log("Nukes: ", nukeCount+"");
     }
 }

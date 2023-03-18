@@ -44,7 +44,6 @@ public class LaserProjectile implements Renderable {
     public void show() {
 
         BodyDef def = new BodyDef();
-
         def.type = BodyDef.BodyType.DynamicBody;
         def.fixedRotation = true;
         def.position.set(x, y);

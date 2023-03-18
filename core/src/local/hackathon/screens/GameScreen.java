@@ -7,9 +7,11 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -20,11 +22,15 @@ import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
 import local.hackathon.entities.LaserProjectile;
+import local.hackathon.powerups.NukeUp;
+import local.hackathon.powerups.OrangeUp;
+import local.hackathon.powerups.PowerUp;
 import local.hackathon.util.TiledObjects;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import static local.hackathon.Game.controllerController;
 import static local.hackathon.util.Settings.*;
@@ -47,6 +53,7 @@ public class GameScreen implements Screen {
     BossDeath bossDeath;
 
     private ArrayList<LaserProjectile> lasers;
+    private ArrayList<PowerUp> powerUps;
 
     private HashSet<Body> clense;
 
@@ -80,6 +87,7 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
 
         players = new ArrayList<>();
+        powerUps = new ArrayList<>();
 
         bossDeath = new BossDeath(world, batch, this, players);
         bossDeath.show();
@@ -112,6 +120,22 @@ public class GameScreen implements Screen {
 
             Object aData = a.getUserData();
             Object bData = b.getUserData();
+
+
+            if(aData instanceof OrangeUp || aData instanceof NukeUp){
+                Object bBData = b.getBody().getUserData();
+                if(bBData instanceof Player){
+                    ((Player)bBData).givePowerUp((PowerUp) aData);
+                    removePowerUp((PowerUp) aData);
+                }
+            }
+            if(bData instanceof OrangeUp || bData instanceof NukeUp){
+                Object aBData = a.getBody().getUserData();
+                if(aBData instanceof Player){
+                    ((Player)aBData).givePowerUp((PowerUp) bData);
+                    removePowerUp((PowerUp) bData);
+                }
+            }
 
             if(aData instanceof MapObject){
                 if(bData instanceof LaserProjectile){
@@ -183,6 +207,8 @@ public class GameScreen implements Screen {
         // Draw sprites
         batch.begin();
 
+
+
         for (LaserProjectile l : lasers){
             l.render(delta);
         }
@@ -193,10 +219,42 @@ public class GameScreen implements Screen {
 
         bossDeath.render(delta);
 
+        spawnPowerups(delta);
 
         batch.end();
 
         b2dr.render(world, camera.combined.scl(PPM));
+    }
+    private float powerupInterval = 0;
+    public void spawnPowerups(float delta){
+        powerupInterval+=delta;
+
+        if (powerupInterval>10){
+            powerupInterval = 0;
+            int rand = rand(1, 10);
+            MapProperties prop = map.getProperties();
+            int x = rand((int)PPM, (int)(prop.get("width", Integer.class)*PPM)-(int)PPM);
+            int y = rand((int)PPM, (int)(prop.get("height", Integer.class)*PPM)-(int)PPM);
+            x = Math.max(x, 16);
+            y = Math.max(y, 16);
+            Gdx.app.log("PowerupSpawn: ", x+" - "+y);
+            PowerUp p;
+            if(rand>=10){
+                p = new NukeUp(world, batch, x, y);
+            } else {
+                p = new OrangeUp(world, batch, x, y);
+            }
+            p.show();
+            powerUps.add(p);
+        }
+        for (PowerUp p : powerUps){
+            p.render(delta);
+        }
+    }
+
+    private int rand(int min, int max){
+        Random random = new Random();
+        return random.nextInt(max+1-min)+min;
     }
 
     private void update(float delta){
@@ -321,6 +379,12 @@ public class GameScreen implements Screen {
         lasers.remove(laser);
         laser.dispose();
         clense.add(laser.getBody());
+    }
+
+    public void removePowerUp(PowerUp p){
+        powerUps.remove(p);
+        p.hide();
+        clense.add(p.getBody());
     }
 
     @Override
