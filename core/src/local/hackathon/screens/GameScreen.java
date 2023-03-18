@@ -274,7 +274,11 @@ public class GameScreen implements Screen {
         // Draw sprites
         batch.begin();
 
-
+        // Numbers
+        for (int i = 0; i < players.size(); i++) {
+            font.draw(batch, "Player "+(i+1)+" HP:" + players.get(i).hp, PPM*2, PPM*2+PPM*i);
+        }
+        font.draw(batch, "Boss HP: "+bossDeath.hp, PPM*2, PPM*2+PPM*(players.size()+2));
 
         for (LaserProjectile l : lasers){
             l.render(delta);
@@ -291,13 +295,6 @@ public class GameScreen implements Screen {
         bossDeath.render(delta);
 
         spawnPowerups(delta);
-
-        // OverlayGui
-
-        for (int i = 0; i < players.size(); i++) {
-            font.draw(batch, "Player "+(i+1)+" HP:" + players.get(i).hp, PPM*2, PPM*2+PPM*i);
-        }
-        font.draw(batch, "Boss HP: "+bossDeath.hp, PPM*2, PPM*2+PPM*(players.size()+2));
 
         batch.end();
 

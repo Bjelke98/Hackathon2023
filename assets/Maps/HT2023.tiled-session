@@ -3,16 +3,31 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "map_1.tmx",
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "DungeonPF.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
         "map_0.tmx": {
+            "expandedObjectLayers": [
+                4
+            ],
             "scale": 3.61,
             "selectedLayer": 1,
             "viewCenter": {
                 "x": 158.0332409972299,
                 "y": 160.24930747922437
+            }
+        },
+        "map_1.tmx": {
+            "scale": 1.8524999999999998,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 320.37786774628887,
+                "y": 160.05398110661272
             }
         }
     },
@@ -23,9 +38,15 @@
     "map.tileWidth": 16,
     "map.width": 40,
     "openFiles": [
+        "map_0.tmx",
+        "DungeonPF.tsx",
+        "map_1.tmx"
     ],
     "project": "HT2023.tiled-project",
     "recentFiles": [
+        "map_0.tmx",
+        "DungeonPF.tsx",
+        "map_1.tmx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

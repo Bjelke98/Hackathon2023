@@ -2,8 +2,12 @@ package local.hackathon.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -23,15 +27,24 @@ public class MenuScreen implements Screen {
     TextButton scoreBoard;
     TextButton exit;
 
+    Label header;
+
+    private BitmapFont font;
+
     public MenuScreen(Game parent){
         this.parent = parent;
     }
-
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("GUIfont.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 48;
+        font = generator.generateFont(parameter);
+
+        header = new Label("Capyblasta", new Label.LabelStyle(font, Color.WHITE));
 
         newGame = new TextButton("New Game", SKIN);
         scoreBoard = new TextButton("Scoreboard", SKIN);
@@ -43,8 +56,10 @@ public class MenuScreen implements Screen {
         table.setFillParent(true);
         stage.addActor(table);
 
-        table.add(newGame).fillX().uniformX();
+        table.add(header).fillX().uniformX();
         table.row().pad(10, 0, 10, 0);
+        table.add(newGame).fillX().uniformX();
+        table.row();
         table.add(scoreBoard).fillX().uniformX();
         table.row();
         table.add(exit).fillX().uniformX();
