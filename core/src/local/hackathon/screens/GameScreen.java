@@ -18,7 +18,9 @@ import local.hackathon.Game;
 import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
+import local.hackathon.entities.LaserProjectile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static local.hackathon.Game.controllerController;
@@ -37,7 +39,10 @@ public class GameScreen implements Screen {
     private Box2DDebugRenderer b2dr;
     private World world;
 
-    private Player player;
+
+    private ArrayList<Player> players;
+
+    private ArrayList<LaserProjectile> lasers;
 
     public GameScreen(Game parent){
         this.parent = parent;
@@ -57,15 +62,21 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, -10f), false);
         b2dr = new Box2DDebugRenderer();
 
-        // Player
-        player = new Player(world);
-        player.show();
-
         // Textures
         batch = new SpriteBatch();
 
+        players = new ArrayList<>();
+
+        for (Controller c : controllerController.getControllers()){
+            Player p = new Player(world, batch, this, c);
+            p.show();
+            players.add(p);
+        }
+
+        lasers = new ArrayList<>();
+
         // Map
-        map = new TmxMapLoader().load("Maps/map_0.tmx");
+        map = new TmxMapLoader().load("Maps/map_1.tmx");
         tmr = new OrthogonalTiledMapRenderer(map);
 
         TiledObjects.parse(world, map.getLayers().get("hitbox").getObjects());
@@ -76,12 +87,23 @@ public class GameScreen implements Screen {
         update(delta);
         ScreenUtils.clear(0, 0, 0, 1);
 
+
+
+        tmr.render();
+
         // Draw sprites
         batch.begin();
 
-        batch.end();
+        for (LaserProjectile l : lasers){
+            l.render(delta);
+        }
 
-        tmr.render();
+        for (Player p : players){
+            p.render(delta);
+        }
+
+
+        batch.end();
 
         b2dr.render(world, camera.combined.scl(PPM));
     }
@@ -97,9 +119,19 @@ public class GameScreen implements Screen {
     }
 
     private void updateCamera(float delta){
+
+        float playersPosX = 0;
+        float playersPosY = 0;
+
         Vector3 position = camera.position;
-        position.x = player.getPosition().x * PPM;
-        position.y = player.getPosition().y * PPM;
+
+        for (Player p : players){
+            playersPosX+=p.getPosition().x;
+            playersPosY+=p.getPosition().y;
+        }
+
+        position.x = (playersPosX/players.size()) * PPM;
+        position.y = (playersPosY/players.size()) * PPM;
         camera.position.set(position);
 
         camera.update();
@@ -111,42 +143,56 @@ public class GameScreen implements Screen {
 
         List<Controller> controllers = controllerController.getControllers();
 
-        if(controllers.size()<1) return;
+        for (int i = 0; i < controllers.size(); i++) {
 
-        Controller p1Controller = controllers.get(0);
+            Controller controller = controllers.get(i);
 
-        float axisLX = p1Controller.getAxis(p1Controller.getMapping().axisLeftX);
-        float axisLY = p1Controller.getAxis(p1Controller.getMapping().axisLeftY);
-        boolean btnA = p1Controller.getButton(p1Controller.getMapping().buttonA);
+            Player player = players.get(i);
 
-        float horizontalForce = 0;
+            float axisLX = controller.getAxis(controller.getMapping().axisLeftX);
+            float axisLY = controller.getAxis(controller.getMapping().axisLeftY);
+            boolean btnA = controller.getButton(controller.getMapping().buttonA);
 
-        if(axisLX>=.2f || axisLX<=-.2f) {
-            horizontalForce+=Math.min(axisLX, 1f);
+            float horizontalForce = 0;
+
+            if(axisLX>=.2f || axisLX<=-.2f) {
+                horizontalForce+=Math.min(axisLX, 1f);
+            }
+
+            Body playerBody = player.getBody();
+
+            if(btnA){
+                player.jump();
+            }
+
+            if(player.tryJump()){
+                playerBody.applyForceToCenter(0, 500, false);
+            }
+
+            float xVel = playerBody.getLinearVelocity().x;
+
+            if(xVel > 2){
+                player.setHorisontalStatus(PlayerStatus.RIGHT);
+            }
+            if(xVel < -2){
+                player.setHorisontalStatus(PlayerStatus.LEFT);
+            }
+
+//        Gdx.app.log("XVEL: ", ""+xVel);
+
+            float yVel = playerBody.getLinearVelocity().y;
+
+            if(yVel >=-2 && yVel <=2 && player.getJumpingStatus() != PlayerStatus.UP){
+                player.setJumpingStatus(PlayerStatus.STANDING);
+            } else if(yVel>2){
+                player.setJumpingStatus(PlayerStatus.UP);
+            } else if(yVel<-2){
+                player.setJumpingStatus(PlayerStatus.DOWN);
+            }
+
+            playerBody.setLinearVelocity(horizontalForce*10, playerBody.getLinearVelocity().y);
+
         }
-
-        Body playerBody = player.getBody();
-
-        if(btnA){
-            player.jump();
-        }
-
-        if(player.tryJump()){
-            playerBody.applyForceToCenter(0, 500, false);
-        }
-
-        float yVel = playerBody.getLinearVelocity().y;
-
-        if(yVel == 0 && player.getJumpingStatus() != PlayerStatus.UP){
-            player.setJumpingStatus(PlayerStatus.STANDING);
-        } else if(yVel>0){
-            player.setJumpingStatus(PlayerStatus.UP);
-        } else {
-            player.setJumpingStatus(PlayerStatus.DOWN);
-        }
-
-        playerBody.setLinearVelocity(horizontalForce*10, playerBody.getLinearVelocity().y);
-
     }
 
     @Override
@@ -169,6 +215,13 @@ public class GameScreen implements Screen {
         dispose();
     }
 
+    public LaserProjectile addLaser(Player sender, float radians){
+        LaserProjectile laser = new LaserProjectile(world, batch, sender, radians);
+        laser.show();
+        lasers.add(laser);
+        return laser;
+    }
+
     @Override
     public void dispose() {
         world.dispose();
@@ -177,6 +230,8 @@ public class GameScreen implements Screen {
         tmr.dispose();
         map.dispose();
 
-        player.hide();
+        for (Player p : players){
+            p.hide();
+        }
     }
 }

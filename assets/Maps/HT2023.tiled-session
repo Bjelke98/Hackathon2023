@@ -7,13 +7,21 @@
     "expandedProjectPaths": [
     ],
     "fileStates": {
+        "map_0.tmx": {
+            "scale": 3.61,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 158.0332409972299,
+                "y": 160.24930747922437
+            }
+        }
     },
     "last.imagePath": "D:/JavaProjects/Hackathon2023/assets/Maps/DungenPF",
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": null,
     "map.tileHeight": 16,
     "map.tileWidth": 16,
-    "map.width": 20,
+    "map.width": 40,
     "openFiles": [
     ],
     "project": "HT2023.tiled-project",

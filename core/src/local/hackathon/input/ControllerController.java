@@ -47,6 +47,7 @@ public class ControllerController {
     public ControllerController(){
         for (Controller controller : Controllers.getControllers()) {
             Gdx.app.log("Controller name: ", controller.getName());
+            Gdx.app.log("Controller can vibrate: ", controller.canVibrate()?"True":"False");
             controllers.add(controller);
             controller.addListener(new Change(this));
         }

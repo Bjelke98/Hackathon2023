@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import local.hackathon.input.ControllerController;
 import local.hackathon.screens.GameScreen;
+import local.hackathon.screens.MenuScreen;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -20,14 +21,28 @@ import java.util.HashSet;
 public class Game extends com.badlogic.gdx.Game {
 
 	GameScreen gameScreen;
+	MenuScreen menuScreen;
 
 	public static ControllerController controllerController;
 
 	@Override
 	public void create () {
 		controllerController = new ControllerController();
-		gameScreen = new GameScreen(this);
-		setScreen(gameScreen);
+		changeScreen(1);
+	}
+
+	public void changeScreen(int screen){
+		switch (screen){
+			case 1:
+				if(menuScreen == null) menuScreen = new MenuScreen(this);
+				this.setScreen(menuScreen);
+				break;
+			case 2:
+				if(gameScreen != null) gameScreen.hide();
+				gameScreen = new GameScreen(this);
+				this.setScreen(gameScreen);
+				break;
+		}
 	}
 
 	@Override

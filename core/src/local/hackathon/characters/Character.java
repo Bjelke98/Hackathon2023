@@ -11,8 +11,8 @@ import static local.hackathon.util.Settings.PPM;
 
 public class Character implements Renderable {
 
-    private Body body;
-    private final World world;
+    protected Body body;
+    protected final World world;
 
     public static final int START_X = 16*5;
     public static final int START_Y = 16*5;
