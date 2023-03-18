@@ -14,9 +14,10 @@ public class Character implements Renderable {
     protected Body body;
     protected final World world;
 
-    public static int START_X = 16*5;
-    public static int START_Y = 16*5;
-    public static float CHARACTER_RADIUS = PPM;
+    public int START_X = 16*5;
+    public int START_Y = 16*5;
+    public float CHARACTER_WIDTH = PPM;
+    public float CHARACTER_HEIGHT = PPM;
 
     public Character(World world){
         this.world = world;
@@ -35,7 +36,7 @@ public class Character implements Renderable {
 
         // Shape
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(CHARACTER_RADIUS / 2 / PPM, CHARACTER_RADIUS / 2 / PPM);
+        shape.setAsBox(CHARACTER_WIDTH / 2 / PPM, CHARACTER_HEIGHT / 2 / PPM);
 
         body.createFixture(shape, 1);
 

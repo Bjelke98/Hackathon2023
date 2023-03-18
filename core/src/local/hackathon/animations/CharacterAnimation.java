@@ -9,10 +9,16 @@ public class CharacterAnimation {
     float stateTime;
     TextureRegion[] tr;
     float fr;
+    boolean loop = true;
 
     public CharacterAnimation(TextureRegion[] tr, float fr){
         this.tr = tr;
         this.fr = fr;
+    }
+
+    public CharacterAnimation(TextureRegion[] tr, float fr, boolean loop){
+        this(tr, fr);
+        this.loop = loop;
     }
 
     public void show(){
@@ -22,12 +28,16 @@ public class CharacterAnimation {
 
     public TextureRegion getFrame(float delta){
         stateTime+=delta;
-        return animation.getKeyFrame(stateTime, true);
+        return animation.getKeyFrame(stateTime, loop);
     }
 
     public void flip(){
         for (TextureRegion tr : animation.getKeyFrames()){
             tr.flip(true, false);
         }
+    }
+
+    public boolean finished(float delta){
+        return animation.isAnimationFinished(delta);
     }
 }

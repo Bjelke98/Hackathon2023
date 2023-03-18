@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import local.hackathon.Renderable;
+import local.hackathon.characters.Bosses.BossDeath;
+import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.screens.GameScreen;
 
@@ -25,11 +27,11 @@ public class LaserProjectile implements Renderable {
     Sprite sprite;
 
     float x, y, radians;
-    Player sender;
+    Character sender;
 
     private Texture texture;
 
-    public LaserProjectile(World world, SpriteBatch batch, Player sender, float radians) {
+    public LaserProjectile(World world, SpriteBatch batch, Character sender, float radians) {
         this.world = world;
         this.batch = batch;
         this.x = sender.getPosition().x;
@@ -81,7 +83,8 @@ public class LaserProjectile implements Renderable {
         sprite = new Sprite(region);
         sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
 
-        sender.getBody().applyForceToCenter(-vx*20, -vy*.75f, false);
+        if(sender instanceof Player)
+            sender.getBody().applyForceToCenter(-vx*20, -vy*.75f, false);
 
     }
 
@@ -104,5 +107,9 @@ public class LaserProjectile implements Renderable {
 
     public Body getBody() {
         return body;
+    }
+
+    public Character getSender() {
+        return sender;
     }
 }

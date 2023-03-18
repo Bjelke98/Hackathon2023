@@ -14,9 +14,12 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import local.hackathon.Game;
+import local.hackathon.characters.Bosses.BossDeath;
+import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
 import local.hackathon.entities.LaserProjectile;
+import local.hackathon.util.Damage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -42,9 +45,13 @@ public class GameScreen implements Screen {
 
     private ArrayList<Player> players;
 
+    BossDeath bossDeath;
+
     private ArrayList<LaserProjectile> lasers;
 
     private HashSet<Body> clense;
+
+    private float timeSpent;
 
     public GameScreen(Game parent){
         this.parent = parent;
@@ -68,6 +75,9 @@ public class GameScreen implements Screen {
         batch = new SpriteBatch();
 
         players = new ArrayList<>();
+
+        bossDeath = new BossDeath(world, batch, this, players);
+        bossDeath.show();
 
         for (Controller c : controllerController.getControllers()){
             Player p = new Player(world, batch, this, c);
@@ -102,11 +112,23 @@ public class GameScreen implements Screen {
                 if(bData instanceof LaserProjectile){
                     removeLaser((LaserProjectile) bData);
                 }
-            }
-
-            if(bData instanceof MapObject){
+            } else if(bData instanceof MapObject){
                 if(aData instanceof LaserProjectile){
                     removeLaser((LaserProjectile) aData);
+                }
+            } else if(aData instanceof BossDeath){
+                if(bData instanceof LaserProjectile){
+                    if(((LaserProjectile) bData).getSender() instanceof Player){
+                        ((BossDeath) aData).impact(Damage.LASER);
+                        removeLaser((LaserProjectile) bData);
+                    }
+                }
+            } else if(bData instanceof BossDeath){
+                if(aData instanceof LaserProjectile){
+                    if(((LaserProjectile) aData).getSender() instanceof Player){
+                        ((BossDeath) bData).impact(Damage.LASER);
+                        removeLaser((LaserProjectile) aData);
+                    }
                 }
             }
 
@@ -150,6 +172,8 @@ public class GameScreen implements Screen {
             p.render(delta);
         }
 
+        bossDeath.render(delta);
+
 
         batch.end();
 
@@ -157,7 +181,7 @@ public class GameScreen implements Screen {
     }
 
     private void update(float delta){
-
+        timeSpent+=delta;
         // Clean last
         for(Body c : clense) world.destroyBody(c);
         clense.clear();
@@ -268,7 +292,7 @@ public class GameScreen implements Screen {
         dispose();
     }
 
-    public void addLaser(Player sender, float radians){
+    public void addLaser(Character sender, float radians){
         LaserProjectile laser = new LaserProjectile(world, batch, sender, radians);
         laser.show();
         lasers.add(laser);
@@ -291,5 +315,7 @@ public class GameScreen implements Screen {
         for (Player p : players){
             p.hide();
         }
+
+        bossDeath.dispose();
     }
 }
