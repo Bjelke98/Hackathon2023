@@ -4,70 +4,64 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import local.hackathon.Game;
+import local.hackathon.characters.Bosses.BossDeath;
+import local.hackathon.util.Scoreboard;
+
+import java.util.Set;
 
 import static local.hackathon.util.Settings.SKIN;
 
-public class MenuScreen implements Screen {
-
+public class ScoreboardScreen implements Screen {
     Game parent;
     Stage stage;
 
-    TextButton newGame;
-    TextButton scoreBoard;
-    TextButton exit;
+    Label header;
+    TextArea scoresText;
+    Button back;
 
-    public MenuScreen(Game parent){
+    public ScoreboardScreen(Game parent, int playerHP, int bossHP, float duration){
         this.parent = parent;
     }
+
+    StringBuilder sb;
 
     @Override
     public void show() {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
+        header = new Label("Scoreboard!", SKIN);
+        back = new TextButton("Back", SKIN);
+        sb = new StringBuilder();
 
-        newGame = new TextButton("New Game", SKIN);
-        scoreBoard = new TextButton("Scoreboard", SKIN);
-        exit = new TextButton("Exit", SKIN);
+        Scoreboard.deSerialize();
+        Set<String> keys = Scoreboard.scores.keySet();
+        for (String k : keys){
+            sb.append(k).append(": ").append(Scoreboard.scores.get(k)).append("\n");
+        }
 
-
+        scoresText = new TextArea(sb.toString(), SKIN);
 
         Table table = new Table();
         table.setFillParent(true);
         table.setDebug(true);
         stage.addActor(table);
 
-        table.add(newGame).fillX().uniformX();
+        table.add(header).fillX().uniformX();
         table.row().pad(10, 0, 10, 0);
-        table.add(scoreBoard).fillX().uniformX();
+        table.add(scoresText).fillX().uniformX();
         table.row();
-        table.add(exit).fillX().uniformX();
+        table.add(back).fillX().uniformX();
 
-        newGame.addListener(new ChangeListener() {
+        back.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                parent.changeScreen(2, 0, 0, 0);
-            }
-        });
-
-        scoreBoard.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                parent.changeScreen(4, 0, 0, 0);
-            }
-        });
-
-        exit.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
+                parent.changeScreen(1, 0, 0, 0);
             }
         });
     }

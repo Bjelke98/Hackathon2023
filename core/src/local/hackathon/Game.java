@@ -10,10 +10,13 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.ScreenUtils;
 import local.hackathon.input.ControllerController;
+import local.hackathon.screens.GameOverScreen;
 import local.hackathon.screens.GameScreen;
 import local.hackathon.screens.MenuScreen;
+import local.hackathon.screens.ScoreboardScreen;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,25 +25,35 @@ public class Game extends com.badlogic.gdx.Game {
 
 	GameScreen gameScreen;
 	MenuScreen menuScreen;
+	GameOverScreen gameOverScreen;
+	ScoreboardScreen scoreboardScreen;
 
 	public static ControllerController controllerController;
 
 	@Override
 	public void create () {
 		controllerController = new ControllerController();
-		changeScreen(1);
+		changeScreen(3, 10_000, 0, 9999);
 	}
 
-	public void changeScreen(int screen){
+	public void changeScreen(int screen, int playerHP, int bossHP, float timeSpent){
 		switch (screen){
 			case 1:
-				if(menuScreen == null) menuScreen = new MenuScreen(this);
+				menuScreen = new MenuScreen(this);
 				this.setScreen(menuScreen);
 				break;
 			case 2:
 				if(gameScreen != null) gameScreen.hide();
 				gameScreen = new GameScreen(this);
 				this.setScreen(gameScreen);
+				break;
+			case 3:
+				gameOverScreen = new GameOverScreen(this, playerHP, bossHP, timeSpent);
+				this.setScreen(gameOverScreen);
+				break;
+			case 4:
+				scoreboardScreen = new ScoreboardScreen(this, 0, 0, 0);
+				this.setScreen(scoreboardScreen);
 				break;
 		}
 	}
