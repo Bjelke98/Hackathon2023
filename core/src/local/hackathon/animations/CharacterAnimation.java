@@ -3,18 +3,20 @@ package local.hackathon.animations;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class PlayerAnimation {
+public class CharacterAnimation {
 
     Animation<TextureRegion> animation;
     float stateTime;
     TextureRegion[] tr;
+    float fr;
 
-    public PlayerAnimation(TextureRegion[] tr){
+    public CharacterAnimation(TextureRegion[] tr, float fr){
         this.tr = tr;
+        this.fr = fr;
     }
 
     public void show(){
-        animation = new Animation<>(.144f, tr);
+        animation = new Animation<>(fr, tr);
         stateTime = 0f;
     }
 

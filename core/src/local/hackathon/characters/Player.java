@@ -4,13 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.World;
-import local.hackathon.animations.PlayerAnimation;
-import local.hackathon.entities.LaserProjectile;
+import local.hackathon.animations.CharacterAnimation;
 import local.hackathon.screens.GameScreen;
 
 import static local.hackathon.util.Settings.PPM;
@@ -28,20 +26,31 @@ public class Player extends Character {
     Pixmap capySheetScaled;
     Texture capySheet;
 
-    PlayerAnimation walkAnimation;
-    PlayerAnimation jumpAnimation;
-    PlayerAnimation downAnimation;
+    CharacterAnimation walkAnimation;
+    CharacterAnimation jumpAnimation;
+    CharacterAnimation downAnimation;
 
     SpriteBatch batch;
     GameScreen parent;
 
     Controller controller;
 
+    private boolean vibrating = false;
+
     public Player(World world, SpriteBatch batch, GameScreen parent, Controller controller) {
         super(world);
         this.batch = batch;
         this.parent = parent;
         this.controller = controller;
+    }
+
+    public void startVibrate(){
+        if(!controller.isVibrating())
+            controller.startVibration(100, .5f);
+    }
+
+    public void stopVibrate(){
+        controller.cancelVibration();
     }
 
     @Override
@@ -77,17 +86,17 @@ public class Player extends Character {
 
         TextureRegion[] walkFrames = new TextureRegion[8];
         System.arraycopy(tmp[8], 0, walkFrames, 0, walkFrames.length);
-        walkAnimation = new PlayerAnimation(walkFrames);
+        walkAnimation = new CharacterAnimation(walkFrames, .144f);
         walkAnimation.show();
 
         TextureRegion[] jumpFrames = new TextureRegion[8];
         System.arraycopy(tmp[3], 0, jumpFrames, 0, jumpFrames.length);
-        jumpAnimation = new PlayerAnimation(jumpFrames);
+        jumpAnimation = new CharacterAnimation(jumpFrames, .144f);
         jumpAnimation.show();
 
         TextureRegion[] downFrames = new TextureRegion[8];
         System.arraycopy(tmp[6], 0, downFrames, 0, downFrames.length);
-        downAnimation = new PlayerAnimation(downFrames);
+        downAnimation = new CharacterAnimation(downFrames, .144f);
         downAnimation.show();
 
     }
@@ -100,6 +109,9 @@ public class Player extends Character {
 
         if (axisRX<-.2f || axisRX>.2f || axisRY<-.2f || axisRY>.2f){
             parent.addLaser(this, MathUtils.atan2(axisRY, axisRX));
+            startVibrate();
+        } else {
+            stopVibrate();
         }
 
         TextureRegion currentFrame;

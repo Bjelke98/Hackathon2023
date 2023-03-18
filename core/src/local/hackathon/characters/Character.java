@@ -14,9 +14,9 @@ public class Character implements Renderable {
     protected Body body;
     protected final World world;
 
-    public static final int START_X = 16*5;
-    public static final int START_Y = 16*5;
-    public static final float CHARACTER_RADIUS = PPM;
+    public static int START_X = 16*5;
+    public static int START_Y = 16*5;
+    public static float CHARACTER_RADIUS = PPM;
 
     public Character(World world){
         this.world = world;

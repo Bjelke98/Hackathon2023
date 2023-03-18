@@ -214,7 +214,7 @@ public class GameScreen implements Screen {
 
             Body playerBody = player.getBody();
 
-            if(btnA){
+            if(btnA || axisLY < -.75f){
                 player.jump();
             }
 
