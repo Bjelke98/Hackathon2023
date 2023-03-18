@@ -4,8 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -15,7 +19,11 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import local.hackathon.Game;
 import local.hackathon.characters.Bosses.BossDeath;
 import local.hackathon.characters.Character;
@@ -28,6 +36,7 @@ import local.hackathon.powerups.OrangeUp;
 import local.hackathon.powerups.PowerUp;
 import local.hackathon.util.TiledObjects;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -67,13 +76,32 @@ public class GameScreen implements Screen {
 
     public Music gameSong;
 
+    private Texture orangeIcon;
+    private Texture nukeIcon;
+
+    private MapProperties prop;
+
+    Stage hudStage;
+    Viewport hudViewport;
+
+    ArrayList<Label> playerHp;
+    Label bossHp;
+
+    BitmapFont font;
+
     @Override
     public void show() {
+
+        playerHp = new ArrayList<>();
+
+        orangeIcon = new Texture("Other/Orange.png");
+        nukeIcon = new Texture("Other/Nuke.png");
 
 //        gameSong = Gdx.audio.newMusic(Gdx.files.internal("Music/Game.wav"));
 //        gameSong.setLooping(true);
 //        gameSong.play();
         // Screen size
+
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
@@ -88,6 +116,9 @@ public class GameScreen implements Screen {
         // Textures
         batch = new SpriteBatch();
 
+        hudViewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera());
+        hudStage = new Stage(hudViewport, batch);
+
         players = new ArrayList<>();
         powerUps = new ArrayList<>();
 
@@ -100,6 +131,22 @@ public class GameScreen implements Screen {
             players.add(p);
         }
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("GUIfont.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 24;
+        font = generator.generateFont(parameter);
+
+        for (int i = 0; i < players.size(); i++) {
+            Label hpLBL = new Label("HP: "+Player.START_HP, new Label.LabelStyle(font, Color.WHITE));
+            hpLBL.setPosition((PPM*2+PPM), PPM+i*PPM);
+            hudStage.addActor(hpLBL);
+            playerHp.add(hpLBL);
+        }
+
+        bossHp = new Label("Boss HP: "+BossDeath.START_HP, new Label.LabelStyle(font, Color.WHITE));
+        bossHp.setPosition((PPM*2+PPM), PPM+ (players.size()+1)*PPM);
+        hudStage.addActor(bossHp);
+
         lasers = new ArrayList<>();
         fireballs = new ArrayList<>();
 
@@ -110,6 +157,8 @@ public class GameScreen implements Screen {
         tmr = new OrthogonalTiledMapRenderer(map);
 
         world.setContactListener(contactListener);
+
+        prop = map.getProperties();
 
         TiledObjects.parse(world, map.getLayers().get("hitbox").getObjects());
     }
@@ -238,9 +287,16 @@ public class GameScreen implements Screen {
 
         spawnPowerups(delta);
 
+        // OverlayGui
+
+        for (int i = 0; i < players.size(); i++) {
+            font.draw(batch, "Player "+(i+1)+" HP:" + players.get(i).hp, PPM*2, PPM*2+PPM*i);
+        }
+        font.draw(batch, "Boss HP: "+bossDeath.hp, PPM*2, PPM*2+PPM*(players.size()+2));
+
         batch.end();
 
-        b2dr.render(world, camera.combined.scl(PPM));
+        //b2dr.render(world, camera.combined.scl(PPM));
     }
     private float powerupInterval = 0;
     public void spawnPowerups(float delta){
@@ -369,6 +425,8 @@ public class GameScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         camera.setToOrtho(false, width/SCALE, height/SCALE);
+        hudViewport.setScreenWidth(Gdx.graphics.getWidth());
+        hudViewport.setScreenHeight(Gdx.graphics.getHeight());
     }
 
     @Override
@@ -423,6 +481,8 @@ public class GameScreen implements Screen {
         batch.dispose();
         tmr.dispose();
         map.dispose();
+        nukeIcon.dispose();
+        orangeIcon.dispose();
 
         for (Player p : players){
             p.hide();
