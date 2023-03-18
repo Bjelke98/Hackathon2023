@@ -1,6 +1,5 @@
 package local.hackathon.characters.Bosses;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,7 +10,6 @@ import local.hackathon.animations.CharacterAnimation;
 import local.hackathon.characters.Enemy;
 import local.hackathon.characters.Player;
 import local.hackathon.screens.GameScreen;
-import local.hackathon.util.Damage;
 import local.hackathon.util.TexRegion;
 
 import java.util.ArrayList;
@@ -181,12 +179,8 @@ public class BossDeath extends Enemy {
         }
     }
 
-    public void impact(Damage damage){
-        switch (damage){
-            case LASER:
-                hp-=10;
-                break;
-        }
+    public void impact(int damage){
+        hp-=damage;
     }
 
     @Override

@@ -15,6 +15,9 @@ import static local.hackathon.util.Settings.PPM;
 
 public class Player extends Character {
 
+    public static final int START_HP = 50_000;
+    private int hp = START_HP;
+
     boolean spriteIsFlipped = false;
 
     private PlayerStatus jumpingStatus = PlayerStatus.STANDING;
@@ -179,5 +182,9 @@ public class Player extends Character {
 
     public PlayerStatus getHorisontalStatus() {
         return horisontalStatus;
+    }
+
+    public void impact(int damage) {
+        hp-=damage;
     }
 }

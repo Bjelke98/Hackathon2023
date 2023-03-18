@@ -19,16 +19,13 @@ import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
 import local.hackathon.entities.LaserProjectile;
-import local.hackathon.util.Damage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static local.hackathon.Game.controllerController;
-import static local.hackathon.util.Settings.PPM;
-import static local.hackathon.util.Settings.SCALE;
+import static local.hackathon.util.Settings.*;
 
 public class GameScreen implements Screen {
 
@@ -119,14 +116,28 @@ public class GameScreen implements Screen {
             } else if(aData instanceof BossDeath){
                 if(bData instanceof LaserProjectile){
                     if(((LaserProjectile) bData).getSender() instanceof Player){
-                        ((BossDeath) aData).impact(Damage.LASER);
+                        ((BossDeath) aData).impact(LASER_DAMAGE);
                         removeLaser((LaserProjectile) bData);
                     }
                 }
             } else if(bData instanceof BossDeath){
                 if(aData instanceof LaserProjectile){
                     if(((LaserProjectile) aData).getSender() instanceof Player){
-                        ((BossDeath) bData).impact(Damage.LASER);
+                        ((BossDeath) bData).impact(LASER_DAMAGE);
+                        removeLaser((LaserProjectile) aData);
+                    }
+                }
+            } else if(aData instanceof Player){
+                if(bData instanceof LaserProjectile){
+                    if(((LaserProjectile) bData).getSender() instanceof BossDeath){
+                        ((Player) aData).impact(LASER_DAMAGE);
+                        removeLaser((LaserProjectile) bData);
+                    }
+                }
+            } else if(bData instanceof Player){
+                if(aData instanceof LaserProjectile){
+                    if(((LaserProjectile) aData).getSender() instanceof BossDeath){
+                        ((Player) bData).impact(LASER_DAMAGE);
                         removeLaser((LaserProjectile) aData);
                     }
                 }
