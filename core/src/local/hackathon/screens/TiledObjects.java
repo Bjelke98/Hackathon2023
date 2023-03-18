@@ -28,6 +28,7 @@ public class TiledObjects {
             def.type = BodyDef.BodyType.StaticBody;
             Body body = world.createBody(def);
             body.createFixture(shape, 1);
+            body.getFixtureList().get(0).setUserData(object);
 
             // Cleanup
             shape.dispose();

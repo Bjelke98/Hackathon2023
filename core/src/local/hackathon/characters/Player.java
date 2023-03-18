@@ -47,6 +47,9 @@ public class Player extends Character {
     @Override
     public void show() {
         super.show();
+
+        body.setUserData(this);
+
         capySheetOG = new Pixmap(Gdx.files.internal(("Characters/Capy.png")));
         capySheetScaled = new Pixmap(576/4, 576/4, capySheetOG.getFormat());
         capySheetScaled.drawPixmap(capySheetOG,

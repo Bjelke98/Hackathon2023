@@ -43,11 +43,13 @@ public class LaserProjectile implements Renderable {
 
         BodyDef def = new BodyDef();
 
-        def.type = BodyDef.BodyType.KinematicBody;
+        def.type = BodyDef.BodyType.DynamicBody;
         def.fixedRotation = true;
         def.position.set(x, y);
+        def.gravityScale = 0;
 
         body = world.createBody(def);
+
 
         PolygonShape shape = new PolygonShape();
 
@@ -57,8 +59,11 @@ public class LaserProjectile implements Renderable {
         fix.density = 0;
         fix.shape = shape;
         fix.isSensor = true;
+        fix.restitution = 1;
 
         body.createFixture(fix);
+
+        body.getFixtureList().get(0).setUserData(this);
 
         Vector2 position = body.getPosition();
 
@@ -95,5 +100,9 @@ public class LaserProjectile implements Renderable {
     @Override
     public void dispose() {
         texture.dispose();
+    }
+
+    public Body getBody() {
+        return body;
     }
 }

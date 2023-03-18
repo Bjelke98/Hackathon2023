@@ -5,23 +5,23 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.ScreenUtils;
 import local.hackathon.Game;
-import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
 import local.hackathon.entities.LaserProjectile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static local.hackathon.Game.controllerController;
 import static local.hackathon.util.Settings.PPM;
@@ -43,6 +43,8 @@ public class GameScreen implements Screen {
     private ArrayList<Player> players;
 
     private ArrayList<LaserProjectile> lasers;
+
+    private HashSet<Body> clense;
 
     public GameScreen(Game parent){
         this.parent = parent;
@@ -75,16 +77,62 @@ public class GameScreen implements Screen {
 
         lasers = new ArrayList<>();
 
+        clense = new HashSet<>();
+
         // Map
         map = new TmxMapLoader().load("Maps/map_1.tmx");
         tmr = new OrthogonalTiledMapRenderer(map);
 
+        world.setContactListener(contactListener);
+
         TiledObjects.parse(world, map.getLayers().get("hitbox").getObjects());
     }
+
+    ContactListener contactListener = new ContactListener() {
+        @Override
+        public void beginContact(Contact contact) {
+
+            Fixture a = contact.getFixtureA();
+            Fixture b = contact.getFixtureB();
+
+            Object aData = a.getUserData();
+            Object bData = b.getUserData();
+
+            if(aData instanceof MapObject){
+                if(bData instanceof LaserProjectile){
+                    removeLaser((LaserProjectile) bData);
+                }
+            }
+
+            if(bData instanceof MapObject){
+                if(aData instanceof LaserProjectile){
+                    removeLaser((LaserProjectile) aData);
+                }
+            }
+
+
+        }
+
+        @Override
+        public void endContact(Contact contact) {
+
+        }
+
+        @Override
+        public void preSolve(Contact contact, Manifold oldManifold) {
+
+        }
+
+        @Override
+        public void postSolve(Contact contact, ContactImpulse impulse) {
+
+        }
+    };
 
     @Override
     public void render(float delta) {
         update(delta);
+
         ScreenUtils.clear(0, 0, 0, 1);
 
 
@@ -109,6 +157,11 @@ public class GameScreen implements Screen {
     }
 
     private void update(float delta){
+
+        // Clean last
+        for(Body c : clense) world.destroyBody(c);
+        clense.clear();
+
         world.step(1/60f, 6, 2);
 
         updateInput(delta);
@@ -215,11 +268,16 @@ public class GameScreen implements Screen {
         dispose();
     }
 
-    public LaserProjectile addLaser(Player sender, float radians){
+    public void addLaser(Player sender, float radians){
         LaserProjectile laser = new LaserProjectile(world, batch, sender, radians);
         laser.show();
         lasers.add(laser);
-        return laser;
+    }
+
+    public void removeLaser(LaserProjectile laser){
+        lasers.remove(laser);
+        laser.dispose();
+        clense.add(laser.getBody());
     }
 
     @Override
