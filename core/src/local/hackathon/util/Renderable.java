@@ -1,4 +1,4 @@
-package local.hackathon;
+package local.hackathon.util;
 
 public interface Renderable {
     void show ();

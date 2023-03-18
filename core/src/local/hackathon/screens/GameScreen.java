@@ -39,7 +39,7 @@ import static local.hackathon.util.Settings.*;
 public class GameScreen implements Screen {
 
     private SpriteBatch batch;
-    private Game parent;
+    public Game parent;
 
     private OrthographicCamera camera;
     private OrthogonalTiledMapRenderer tmr;
@@ -49,9 +49,9 @@ public class GameScreen implements Screen {
     private World world;
 
 
-    private ArrayList<Player> players;
+    public ArrayList<Player> players;
 
-    BossDeath bossDeath;
+    public BossDeath bossDeath;
 
     private ArrayList<LaserProjectile> lasers;
     private ArrayList<PowerUp> powerUps;
@@ -59,7 +59,7 @@ public class GameScreen implements Screen {
 
     private HashSet<Body> clense;
 
-    private float timeSpent;
+    public float timeSpent;
 
     public GameScreen(Game parent){
         this.parent = parent;

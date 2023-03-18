@@ -37,7 +37,7 @@ public class Game extends com.badlogic.gdx.Game {
 //		menuSong.setLooping(true);
 //		menuSong.play();
 		controllerController = new ControllerController();
-		changeScreen(1, 10_000, 0, 9999);
+		changeScreen(1, 0, 0, 0);
 	}
 
 	public void changeScreen(int screen, int playerHP, int bossHP, float timeSpent){

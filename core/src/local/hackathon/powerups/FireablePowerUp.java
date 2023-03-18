@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import local.hackathon.Renderable;
+import local.hackathon.util.Renderable;
 import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 

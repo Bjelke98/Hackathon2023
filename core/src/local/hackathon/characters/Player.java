@@ -202,6 +202,9 @@ public class Player extends Character {
 
     public void impact(int damage) {
         hp-=damage;
+        if(hp<=0){
+            parent.parent.changeScreen(3, 0, parent.bossDeath.hp, parent.timeSpent);
+        }
     }
 
     public void givePowerUp(PowerUp powerUp) {
