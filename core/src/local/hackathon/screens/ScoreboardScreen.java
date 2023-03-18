@@ -21,7 +21,7 @@ public class ScoreboardScreen implements Screen {
     Stage stage;
 
     Label header;
-    TextArea scoresText;
+    Label scoresText;
     Button back;
 
     public ScoreboardScreen(Game parent, int playerHP, int bossHP, float duration){
@@ -45,7 +45,7 @@ public class ScoreboardScreen implements Screen {
             sb.append(k).append(": ").append(Scoreboard.scores.get(k)).append("\n");
         }
 
-        scoresText = new TextArea(sb.toString(), SKIN);
+        scoresText = new Label(sb.toString(), SKIN);
 
         Table table = new Table();
         table.setFillParent(true);

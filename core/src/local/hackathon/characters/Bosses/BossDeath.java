@@ -24,14 +24,14 @@ public class BossDeath extends Enemy {
         ATTACK2,
     }
 
-    public static final int START_HP = 100_000;
+    public static final int START_HP = 30_000;
     public static final int HP_ATTACK_INTERVAL = 1_000;
     public static final float TIME_ATTACK_INTERVAL = 3;
 
     float timeInterval = 0;
 
 
-    public int hp = 100;
+    public int hp = START_HP;
     float hpInterval = hp;
 
     Texture idle1;

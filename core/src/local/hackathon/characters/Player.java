@@ -18,8 +18,8 @@ import static local.hackathon.util.Settings.PPM;
 
 public class Player extends Character {
 
-    public static final int START_HP = 50_000;
-    public int hp = 100;
+    public static final int START_HP = 10_000;
+    public int hp = START_HP;
 
     boolean spriteIsFlipped = false;
 
