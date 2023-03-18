@@ -22,6 +22,7 @@ import local.hackathon.characters.Character;
 import local.hackathon.characters.Player;
 import local.hackathon.characters.PlayerStatus;
 import local.hackathon.entities.LaserProjectile;
+import local.hackathon.powerups.FireablePowerUp;
 import local.hackathon.powerups.NukeUp;
 import local.hackathon.powerups.OrangeUp;
 import local.hackathon.powerups.PowerUp;
@@ -54,6 +55,7 @@ public class GameScreen implements Screen {
 
     private ArrayList<LaserProjectile> lasers;
     private ArrayList<PowerUp> powerUps;
+    private ArrayList<FireablePowerUp> fireballs;
 
     private HashSet<Body> clense;
 
@@ -99,6 +101,7 @@ public class GameScreen implements Screen {
         }
 
         lasers = new ArrayList<>();
+        fireballs = new ArrayList<>();
 
         clense = new HashSet<>();
 
@@ -151,12 +154,22 @@ public class GameScreen implements Screen {
                         ((BossDeath) aData).impact(LASER_DAMAGE);
                         removeLaser((LaserProjectile) bData);
                     }
+                } else if (bData instanceof FireablePowerUp) {
+                    if(((FireablePowerUp) bData).getSender() instanceof Player){
+                        ((BossDeath) aData).impact(((FireablePowerUp)bData).getDamage());
+                        removeFireBall((FireablePowerUp) bData);
+                    }
                 }
             } else if(bData instanceof BossDeath){
                 if(aData instanceof LaserProjectile){
                     if(((LaserProjectile) aData).getSender() instanceof Player){
                         ((BossDeath) bData).impact(LASER_DAMAGE);
                         removeLaser((LaserProjectile) aData);
+                    }
+                } else if (aData instanceof FireablePowerUp) {
+                    if(((FireablePowerUp) aData).getSender() instanceof Player){
+                        ((BossDeath) bData).impact(((FireablePowerUp)aData).getDamage());
+                        removeFireBall((FireablePowerUp) aData);
                     }
                 }
             } else if(aData instanceof Player){
@@ -211,6 +224,10 @@ public class GameScreen implements Screen {
 
         for (LaserProjectile l : lasers){
             l.render(delta);
+        }
+
+        for (FireablePowerUp p : fireballs){
+            p.render(delta);
         }
 
         for (Player p : players){
@@ -379,6 +396,18 @@ public class GameScreen implements Screen {
         lasers.remove(laser);
         laser.dispose();
         clense.add(laser.getBody());
+    }
+
+    public void addFireBall(Character sender, float radians, int type){
+        FireablePowerUp p = new FireablePowerUp(world, batch, sender, radians, type);
+        p.show();
+        fireballs.add(p);
+    }
+
+    public void removeFireBall(FireablePowerUp p){
+        fireballs.remove(p);
+        p.dispose();
+        clense.add(p.getBody());
     }
 
     public void removePowerUp(PowerUp p){

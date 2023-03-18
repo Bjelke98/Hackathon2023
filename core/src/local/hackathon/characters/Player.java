@@ -116,7 +116,18 @@ public class Player extends Character {
         float axisRY = controller.getAxis(controller.getMapping().axisRightY);
 
         if (axisRX<-.2f || axisRX>.2f || axisRY<-.2f || axisRY>.2f){
-            parent.addLaser(this, MathUtils.atan2(axisRY, axisRX));
+            float angle = MathUtils.atan2(axisRY, axisRX);
+            parent.addLaser(this, angle);
+            boolean l1 = controller.getButton(controller.getMapping().buttonL1);
+            boolean l2 = controller.getButton(controller.getMapping().buttonL2);
+            if(l1 && orangeCount>0){
+                orangeCount--;
+                parent.addFireBall(this, angle, 0);
+            }
+            if(l2 && nukeCount>0){
+                nukeCount--;
+                parent.addFireBall(this, angle, 1);
+            }
             startVibrate();
         } else {
             stopVibrate();
